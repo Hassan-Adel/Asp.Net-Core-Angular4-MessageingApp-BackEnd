@@ -37,6 +37,15 @@ namespace MessageBoardBackend
             // Add framework services.
             services.AddApplicationInsightsTelemetry(Configuration);
 
+            services.AddCors(options => options.AddPolicy("Cors",
+                builder =>
+                {
+                    builder
+                    .AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader();
+                }));
+
             services.AddMvc();
         }
 
@@ -49,6 +58,9 @@ namespace MessageBoardBackend
             app.UseApplicationInsightsRequestTelemetry();
 
             app.UseApplicationInsightsExceptionTelemetry();
+
+            //Cors : the Cors policy name that has been specified above
+            app.UseCors("Cors");
 
             app.UseMvc();
         }

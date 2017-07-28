@@ -12,11 +12,8 @@ namespace MessageBoardBackend.Controllers
     [Route("api/[controller]")]
     public class MessagesController : Controller
     {
-        // GET: api/values
-        [HttpGet]
-        public IEnumerable<Message> Get()
-        {
-            return new Message[] {
+        static List<Message> messages = new 
+            List<Message> {
                 new Message {
                 Owner ="First User",
                 Text = "My_message"
@@ -25,7 +22,12 @@ namespace MessageBoardBackend.Controllers
                 Owner ="Hassan",
                 Text = "My_message"
                 }
-            };
+        };
+        // GET: api/values
+        [HttpGet]
+        public IEnumerable<Message> Get()
+        {
+            return messages;
         }
 
         // GET api/values/5
@@ -37,8 +39,9 @@ namespace MessageBoardBackend.Controllers
 
         // POST api/values
         [HttpPost]
-        public void Post([FromBody]string value)
+        public void Post([FromBody]Message message)
         {
+            messages.Add(message);
         }
 
         // PUT api/values/5

@@ -31,10 +31,10 @@ namespace MessageBoardBackend.Controllers
         }
 
         // GET api/values/5
-        [HttpGet("{id}")]
-        public string Get(int id)
+        [HttpGet("{name}")]
+        public IEnumerable<Message> Get(string name)
         {
-            return "value";
+            return messages.FindAll(message => message.Owner == name);
         }
 
         /*

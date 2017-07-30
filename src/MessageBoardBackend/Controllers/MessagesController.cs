@@ -12,29 +12,24 @@ namespace MessageBoardBackend.Controllers
     [Route("api/[controller]")]
     public class MessagesController : Controller
     {
-        static List<Message> messages = new 
-            List<Message> {
-                new Message {
-                Owner ="First User",
-                Text = "My_message"
-                },
-                new Message {
-                Owner ="Hassan",
-                Text = "My_message"
-                }
-        };
+        private ApiContext context;
+
+        public MessagesController(ApiContext _context) {
+            this.context = _context;
+        }
+
         // GET: api/values
         [HttpGet]
         public IEnumerable<Message> Get()
         {
-            return messages;
+            return context.Messages;
         }
 
         // GET api/values/5
         [HttpGet("{name}")]
         public IEnumerable<Message> Get(string name)
         {
-            return messages.FindAll(message => message.Owner == name);
+            return context.Messages.Where(message => message.Owner == name);
         }
 
         /*
@@ -47,8 +42,10 @@ namespace MessageBoardBackend.Controllers
         [HttpPost]
         public Message Post([FromBody]Message message)
         {
-            messages.Add(message);
-            return message;
+            // Will contain the added Id
+            var dbMessage = context.Messages.Add(message).Entity;
+            context.SaveChanges();
+            return dbMessage;
         }
 
         // PUT api/values/5

@@ -37,6 +37,7 @@ namespace MessageBoardBackend
         {
             // Add framework services.
             services.AddDbContext<ApiContext>(opt => opt.UseInMemoryDatabase());
+
             services.AddApplicationInsightsTelemetry(Configuration);
 
             services.AddCors(options => options.AddPolicy("Cors",

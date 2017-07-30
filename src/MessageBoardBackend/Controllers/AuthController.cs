@@ -10,13 +10,20 @@ using MessageBoardBackend.Models;
 
 namespace MessageBoardBackend.Controllers
 {
+    public class JwtPacket
+    {
+        public string Token { get; set; }
+    }
+
     [Produces("application/json")]
     [Route("auth")]
     public class AuthController : Controller
     {
-        public class JwtPacket
+        private ApiContext context;
+
+        public AuthController(ApiContext _context)
         {
-            public string Token{ get; set; }
+            this.context = _context;
         }
 
         // POST api/values
@@ -25,6 +32,9 @@ namespace MessageBoardBackend.Controllers
         {
             var jwt = new JwtSecurityToken();
             var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
+
+            context.Users.Add(user);
+            context.SaveChanges();
 
             return new JwtPacket() { Token = encodedJwt };
         }

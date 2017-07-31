@@ -13,6 +13,7 @@ namespace MessageBoardBackend.Controllers
     public class JwtPacket
     {
         public string Token { get; set; }
+        public string FirstName { get; set; }
     }
 
     [Produces("application/json")]
@@ -36,7 +37,7 @@ namespace MessageBoardBackend.Controllers
             context.Users.Add(user);
             context.SaveChanges();
 
-            return new JwtPacket() { Token = encodedJwt };
+            return new JwtPacket() { Token = encodedJwt, FirstName = user.FirstName };
         }
         
     }

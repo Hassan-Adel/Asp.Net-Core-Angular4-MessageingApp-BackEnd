@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using System.IdentityModel.Tokens.Jwt;
 using MessageBoardBackend.Models;
+using System.Security.Claims;
 
 // For more information on enabling Web API for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -56,7 +57,11 @@ namespace MessageBoardBackend.Controllers
 
         JwtPacket CreateJwtPacket(User user)
         {
-            var jwt = new JwtSecurityToken();
+            //Create a claim and add it the the JwtSecurityToken
+            var myClaims = new Claim[] {
+                new Claim(JwtRegisteredClaimNames.Sub, user.Id)
+            };
+            var jwt = new JwtSecurityToken(claims: myClaims);
             var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
             return new JwtPacket() { Token = encodedJwt, FirstName = user.FirstName }; 
         }

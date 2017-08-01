@@ -16,6 +16,12 @@ namespace MessageBoardBackend.Controllers
         public string FirstName { get; set; }
     }
 
+    public class LoginData
+    {
+        public string Email { get; set; }
+        public string Password { get; set; }
+    }
+
     [Produces("application/json")]
     [Route("auth")]
     public class AuthController : Controller
@@ -28,17 +34,32 @@ namespace MessageBoardBackend.Controllers
         }
 
         // POST api/values
+        [HttpPost("login")]
+        public ActionResult Login([FromBody]LoginData loginData)
+        {
+            var user = context.Users.SingleOrDefault(u => u.Email == loginData.Email && u.Password == loginData.Password);
+            if (user == null)
+                return NotFound("Email or Password are invalid");
+
+            return Ok(CreateJwtPacket(user));
+        }
+
+        // POST api/values
         [HttpPost("register")]
         public JwtPacket Register([FromBody]User user)
         {
-            var jwt = new JwtSecurityToken();
-            var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
-
             context.Users.Add(user);
             context.SaveChanges();
 
-            return new JwtPacket() { Token = encodedJwt, FirstName = user.FirstName };
+            return CreateJwtPacket(user);
         }
-        
+
+        JwtPacket CreateJwtPacket(User user)
+        {
+            var jwt = new JwtSecurityToken();
+            var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
+            return new JwtPacket() { Token = encodedJwt, FirstName = user.FirstName }; 
+        }
+
     }
 }

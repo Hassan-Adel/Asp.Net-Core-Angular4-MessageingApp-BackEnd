@@ -8,6 +8,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace MessageBoardBackend
 {
@@ -62,9 +64,29 @@ namespace MessageBoardBackend
 
             app.UseApplicationInsightsExceptionTelemetry();
 
+            //In a production enviroment will have the secrit in a config file
+            var signingKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes("the secret phrase"));
+
+            //register Middelware
+            app.UseJwtBearerAuthentication(new JwtBearerOptions
+            {//this will cause it to perform some of the common Auth checks in the backgroud 
+                AutomaticAuthenticate = true,
+                AutomaticChallenge = true,
+                TokenValidationParameters = new TokenValidationParameters
+                {
+                    //the false should be true for a secure production envoroment (here for simplicity)
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = signingKey,
+                    ValidateLifetime = false,
+                    ValidateIssuer = false,
+                    ValidateAudience = false
+                }
+            });
+
             //Cors : the Cors policy name that has been specified above
             app.UseCors("Cors");
 
+            //Make sure Mvc is registered after the Jwty middelware
             app.UseMvc();
 
             SeedData(app.ApplicationServices.GetService<ApiContext>());

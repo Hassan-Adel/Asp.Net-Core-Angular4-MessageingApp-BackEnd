@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 // For more information on enabling Web API for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -20,7 +21,7 @@ namespace MessageBoardBackend.Controllers
 
         // GET: api/values
         [HttpGet]
-        public IEnumerable<string> Get()
+        public IEnumerable<string> Get1 ()
         {
             return new string[] { "value1", "value2" };
         }
@@ -34,6 +35,17 @@ namespace MessageBoardBackend.Controllers
                 return NotFound("User not found");
 
             return Ok(user);
+        }
+
+        [Authorize]
+        [HttpGet("me")]
+        public ActionResult Get()
+        {
+            //var user = context.Users.SingleOrDefault(u => u.Id == id);
+            //if (user == null)
+            //    return NotFound("User not found");
+
+            return Ok("secure");
         }
 
         // POST api/values

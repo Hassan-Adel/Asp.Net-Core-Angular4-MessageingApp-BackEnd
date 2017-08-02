@@ -41,11 +41,12 @@ namespace MessageBoardBackend.Controllers
         [HttpGet("me")]
         public ActionResult Get()
         {
-            //var user = context.Users.SingleOrDefault(u => u.Id == id);
-            //if (user == null)
-            //    return NotFound("User not found");
+            var id = HttpContext.User.Claims.First().Value;
+            var user = context.Users.SingleOrDefault(u => u.Id == id);
+            if (user == null)
+                return NotFound("User not found");
 
-            return Ok("secure");
+            return Ok(user);
         }
 
         // POST api/values

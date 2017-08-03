@@ -108,7 +108,8 @@ namespace MessageBoardBackend
             {
                 Email = "admin",
                 Password = "admin",
-                FirstName="Admin"
+                FirstName="Admin",
+                Id="1"
             });
 
             context.SaveChanges();

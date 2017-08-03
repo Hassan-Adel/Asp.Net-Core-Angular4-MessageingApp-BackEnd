@@ -4,11 +4,18 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using MessageBoardBackend.Models;
 
 // For more information on enabling Web API for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace MessageBoardBackend.Controllers
 {
+    public class EditProfileData
+    {
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+    }
+
     [Route("api/[controller]")]
     public class UsersController : Controller
     {
@@ -41,18 +48,35 @@ namespace MessageBoardBackend.Controllers
         [HttpGet("me")]
         public ActionResult Get()
         {
-            var id = HttpContext.User.Claims.First().Value;
-            var user = context.Users.SingleOrDefault(u => u.Id == id);
+            var user = GetSecureUser();
             if (user == null)
                 return NotFound("User not found");
 
             return Ok(user);
         }
 
-        // POST api/values
-        [HttpPost]
-        public void Post([FromBody]string value)
+        [Authorize]
+        [HttpPost("me")]
+        public ActionResult Post([FromBody]EditProfileData profileData)
         {
+            var user = GetSecureUser();
+           if (user == null)
+                return NotFound("User not found");
+
+            // If profileData.FirstName is nul don't change 
+            user.FirstName = profileData.FirstName ?? user.FirstName;
+            user.LastName = profileData.LastName ?? user.LastName;
+            context.SaveChanges();
+
+
+            return Ok(user);
+        }
+
+        User GetSecureUser()
+        {
+            var id = HttpContext.User.Claims.First().Value;
+            User user = context.Users.SingleOrDefault(u => u.Id == id);
+            return user;
         }
 
         // PUT api/values/5
